@@ -298,7 +298,7 @@ blockquote {
 ul li {
   list-style-position: inside;
   list-style: disc;
-  /*padding-left: 20px;*/
+  padding-left: 20px;
   display: inline;
 }
 
@@ -306,6 +306,13 @@ ol li {
   list-style-position: inside;
   list-style: decimal;
   padding-left: 3px;
+}
+
+ul li:first-child{
+  list-style-position: inside;
+  list-style: disc;
+  padding-left: 0px;
+  display: inline;
 }
 
 dl dt {
