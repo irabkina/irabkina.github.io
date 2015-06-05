@@ -66,6 +66,7 @@ a:hover {
 a.not-active {
   pointer-events: none;
   cursor: default;
+  color: #C8C8C8;
 }
 
 header {
