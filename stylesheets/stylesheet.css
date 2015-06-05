@@ -63,6 +63,10 @@ a:hover {
   color: #c5000c;
   text-decoration: underline;
 }
+a.not-active {
+  pointer-events: none;
+  cursor: default;
+}
 
 header {
   padding-top: 35px;
