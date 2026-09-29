@@ -1,5 +1,6 @@
 ---
 title: "About Me"
+widgets: ["photo", "social", "recent", "taglist"]
 ---
 
 ## About Me

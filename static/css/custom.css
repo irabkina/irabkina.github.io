@@ -51,3 +51,11 @@
 		grid-template-columns: 1fr;
 	}
 }
+
+.widget-photo__image {
+	display: block;
+	width: 100%;
+	max-width: 326px;
+	height: auto;
+	border-bottom: 3px solid #e22d30;
+}

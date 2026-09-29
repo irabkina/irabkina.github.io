@@ -42,7 +42,7 @@ theme = "roadster"
   pager = true
   post_meta = ["date", "categories"]
   mainSections = ["blog"]
-  customCSS = ["css/cards.css"]
+  customCSS = ["css/custom.css"]
 
 [params.logo]
   subtitle = "AI Researcher · Builder · Leader"
