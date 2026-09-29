@@ -4,5 +4,6 @@ title: "Contact"
 
 The best way to reach me is by email: [irabkina@gmail.com](mailto:irabkina@gmail.com).
 
-You can also find me on [GitHub](https://github.com/irabkina) and
+You can also find me on [LinkedIn](https://www.linkedin.com/in/irabkina/),
+[GitHub](https://github.com/irabkina), and
 [Google Scholar](https://scholar.google.com.au/citations?user=g5T4T24AAAAJ&hl=en&oi=ao&pli=1).

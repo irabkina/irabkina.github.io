@@ -58,6 +58,7 @@ theme = "roadster"
 
 [params.widgets.social]
   github = "irabkina"
+  linkedin = "irabkina"
   email = "irabkina@gmail.com"
   [[params.widgets.social.custom]]
     title = "Google Scholar"
