@@ -1,0 +1,9 @@
+<section class="card">
+	<p class="card__label">{{ .Get "label" }}</p>
+	<h3 class="card__title">{{ .Get "title" }}</h3>
+	<ul class="card__tags">
+		{{- range split (.Get "tags") "·" }}
+		<li>{{ trim . " " }}</li>
+		{{- end }}
+	</ul>
+</section>

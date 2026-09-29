@@ -1,0 +1,65 @@
+baseURL = "https://irabkina.github.io/"
+title = "Irina Rabkina"
+locale = "en-US"
+theme = "roadster"
+
+[pagination]
+  pagerSize = 10
+
+# Serve the old site, kept in archive/, at /archive/.
+[module]
+  [[module.mounts]]
+    source = "static"
+    target = "static"
+  [[module.mounts]]
+    source = "archive"
+    target = "static/archive"
+    files = ["! Gemfile", "! Gemfile.lock"]
+
+[taxonomies]
+  category = "categories"
+  tag = "tags"
+
+[menus]
+  [[menus.main]]
+    name = "Home"
+    pageRef = "/"
+    weight = 10
+  [[menus.main]]
+    name = "Blog"
+    pageRef = "/blog"
+    weight = 20
+  [[menus.main]]
+    name = "Contact"
+    pageRef = "/contact"
+    weight = 30
+
+[params]
+  description = "AI researcher and technical leader bridging research and application to build, evaluate, and improve intelligent systems."
+  opengraph = true
+  twitter_cards = false
+  readmore = false
+  authorbox = false
+  pager = true
+  post_meta = ["date", "categories"]
+  mainSections = ["blog"]
+  customCSS = ["css/cards.css"]
+
+[params.logo]
+  subtitle = "AI Researcher · Builder · Leader"
+
+[params.sidebar]
+  home = "right"
+  list = "right"
+  single = "right"
+  widgets = ["social", "recent", "taglist"]
+
+[params.widgets]
+  recent_num = 5
+
+[params.widgets.social]
+  github = "irabkina"
+  email = "irabkina@gmail.com"
+  [[params.widgets.social.custom]]
+    title = "Google Scholar"
+    url = "https://scholar.google.com.au/citations?user=g5T4T24AAAAJ&hl=en&oi=ao&pli=1"
