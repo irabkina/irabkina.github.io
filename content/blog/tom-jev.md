@@ -236,7 +236,7 @@ This also gives a very concrete use for the entropy trigger during inference:
 
 But does it change the experiment? Derived beliefs aren't guaranteed to be one-to-one with authored ones—and in fact, they were not. In this implementation, they spell out negatives implied by exclusivity (i.e., what Sam does not know) and only include beliefs that are relevant to the queried agent.
 
-So, I reran the experiment using the updated pipelines. Across both the development and held-out datasets, there were **0 corrections, 0 regressions, and no material change in acceptable mass*. The contents of the rich representation changed, but the results didn't. 
+So, I reran the experiment using the updated pipelines. Across both the development and held-out datasets, there were **0 corrections, 0 regressions, and no material change in acceptable mass**. The contents of the rich representation changed, but the results didn't. 
 
 As a bonus, this provides evidence that the benefit of the rich representation isn't just in explicitly spelling out the belief. There were effectively no performance effects of removing irrelevant other-agent beliefs or making exclusivity implications explicit. What rich buys isn't merely explicit wording. It's having the relevant belief available at all.
 
