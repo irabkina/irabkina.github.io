@@ -67,3 +67,11 @@
 	text-transform: uppercase;
 	border-bottom: 3px solid #e22d30;
 }
+
+/* Post previews on list pages: drop section headings so they don't
+   outweigh the post's own title. */
+.list__excerpt h2,
+.list__excerpt h3,
+.list__excerpt h4 {
+	display: none;
+}

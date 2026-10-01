@@ -1,6 +1,6 @@
 ---
 title: "Knowing When to Re-Represent"
-date: 2026-09-29
+date: 2026-10-01
 mathjax: true
 ---
 
