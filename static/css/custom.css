@@ -75,3 +75,14 @@
 .list__excerpt h4 {
 	display: none;
 }
+
+/* marimo cells rendered by layouts/_markup/render-codeblock-python.html */
+.marimo-cell {
+	margin: 0 0 24px;
+}
+
+.marimo-cell__code summary {
+	cursor: pointer;
+	font-size: 13px;
+	color: var(--color-text-muted);
+}

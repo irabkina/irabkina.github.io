@@ -1,0 +1,6 @@
+{{- /* Loads the marimo islands runtime on pages that are marimo notebooks. */ -}}
+{{- if and .IsPage (index .Params "marimo-version") -}}
+	{{- $version := site.Params.marimoIslandsVersion | default "0.25.1" -}}
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@marimo-team/islands@{{ $version }}/dist/style.css" crossorigin="anonymous">
+	<script type="module" src="https://cdn.jsdelivr.net/npm/@marimo-team/islands@{{ $version }}/dist/main.js"></script>
+{{- end -}}
