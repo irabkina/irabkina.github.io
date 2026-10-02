@@ -1,0 +1,29 @@
+{{- /*
+Renders marimo cells (```python {.marimo}) as marimo islands that run in the
+browser via Pyodide. All other python blocks are highlighted as usual.
+
+Cell attributes follow marimo's markdown notebook format:
+  hide_code="true"  render only the cell's output
+  disabled="true"   skip the cell entirely
+*/ -}}
+{{- $class := .Attributes.class | default "" -}}
+{{- if in (split $class " ") "marimo" -}}
+	{{- if ne .Attributes.disabled "true" -}}
+		{{- /* Islands decode with decodeURIComponent, which leaves "+" alone. */ -}}
+		{{- $code := replace (urlquery .Inner) "+" "%20" -}}
+		<div class="marimo-cell">
+			{{- if ne .Attributes.hide_code "true" }}
+			<details class="marimo-cell__code">
+				<summary>Python</summary>
+				{{ transform.Highlight .Inner "python" }}
+			</details>
+			{{- end }}
+			<marimo-island data-app-id="main" data-reactive="true">
+				<marimo-cell-output></marimo-cell-output>
+				<marimo-cell-code hidden>{{ $code }}</marimo-cell-code>
+			</marimo-island>
+		</div>
+	{{- end -}}
+{{- else -}}
+	{{- transform.HighlightCodeBlock . -}}
+{{- end -}}
