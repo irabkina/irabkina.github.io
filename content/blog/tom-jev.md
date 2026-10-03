@@ -1,7 +1,8 @@
 ---
 title: "Knowing When to Re-Represent"
-date: 2026-10-01
-mathjax: true
+date: "2026-10-01"
+mathjax: "true"
+marimo-version: 0.25.1
 ---
 
 ## An old idea I've been wanting to revisit
@@ -45,6 +46,131 @@ That gives us three versions of the same underlying situation:
 
 The model is the same in all three cases. The underlying situation is the same. What changes is how much work has already been done to represent the agent's mental state.
 
+*The figures in this post are interactive: they run Python in your browser, so they can take a few seconds to appear.*
+
+```python {.marimo hide_code="true"}
+import json
+import math
+import sys
+
+import altair as alt
+import marimo as mo
+
+LABELS = {"sparse": "Sparse", "history": "History", "rich": "Rich"}
+# The site's palette: grey to red as the representation gets richer, and in
+# answer charts, reds for acceptable answers and greys for the rest.
+COLORS = ["#9aa0a6", "#f19a9b", "#e22d30"]
+REDS = ["#e22d30", "#f0787a", "#f8b4b5"]
+GREYS = ["#5f6368", "#80868b", "#9aa0a6", "#c4c8cc"]
+
+
+def entropy(p):
+    # max() turns the -0.0 of a certain answer into 0.0.
+    return max(0.0, -sum(v * math.log2(v) for v in p.values() if v > 0))
+
+
+async def load_json(path):
+    if sys.platform == "emscripten":  # running in the browser
+        import js
+        from pyodide.http import pyfetch
+
+        # Python runs in a worker whose blob: URL carries this site's origin.
+        return await (await pyfetch(f"{js.location.origin}/{path}")).json()
+    from pathlib import Path
+
+    return json.loads((mo.notebook_dir() / "../../static" / path).read_text())
+
+
+# Every scenario from github.com/irabkina/tom-jev: the state Jev saw under
+# each representation, and the distribution it returned.
+scenarios = {}
+for _s in await load_json("data/tom-jev/scenarios.json"):
+    _s["mass"] = {c: sum(p.get(a, 0) for a in _s["acceptable"]) for c, p in _s["probs"].items()}
+    scenarios[_s["id"]] = _s
+
+
+def answer_label(s, option):
+    return option.replace("_", " ") + (" ✓" if option in s["acceptable"] else "")
+
+
+def choice_order(s):
+    """Acceptable answers first, so the red part of a bar starts at 0%."""
+    options = list(next(iter(s["question"].values()))["criteria"])
+    return sorted(options, key=lambda o: o not in s["acceptable"])
+
+
+def choice_scale(s):
+    order = choice_order(s)
+    good = sum(o in s["acceptable"] for o in order)
+    return alt.Scale(
+        domain=[answer_label(s, o) for o in order],
+        range=REDS[:good] + GREYS[: len(order) - good],
+    )
+
+
+def answers_chart(s, conditions=tuple(LABELS)):
+    order = choice_order(s)
+    rows = [
+        {
+            "representation": LABELS[c],
+            "choice": answer_label(s, a),
+            "rank": order.index(a),
+            "probability": v,
+        }
+        for c in conditions
+        for a, v in s["probs"][c].items()
+    ]
+    return (
+        alt.Chart(alt.Data(values=rows))
+        .mark_bar()
+        .encode(
+            x=alt.X(
+                "probability:Q",
+                stack="normalize",
+                title="Jev's probability for each choice",
+                axis=alt.Axis(format="%"),
+            ),
+            y=alt.Y("representation:N", sort=[LABELS[c] for c in conditions], title=None),
+            color=alt.Color(
+                "choice:N",
+                title="Choice",
+                scale=choice_scale(s),
+                legend=alt.Legend(orient="bottom", columns=1),
+            ),
+            order=alt.Order("rank:Q"),
+            tooltip=["representation:N", "choice:N", alt.Tooltip("probability:Q", format=".0%")],
+        )
+        .properties(width="container", height=34 * len(conditions), background="transparent")
+    )
+
+
+def state_text(state):
+    return "\n\n".join(
+        f"{section}:\n" + "\n".join("  " + line for line in text.splitlines())
+        for section, text in state.items()
+    )
+```
+
+Here is exactly what Jev sees for Sam under each representation (switch between the tabs), and the probability it puts on each choice.
+
+```python {.marimo hide_code="true"}
+_sam = scenarios["report_false_positive"]
+_question = next(iter(_sam["question"].values()))
+mo.vstack(
+    [
+        mo.ui.tabs(
+            {LABELS[c]: mo.md(f"```text\n{state_text(_sam['states'][c])}\n```") for c in LABELS}
+        ),
+        mo.md(
+            f"Jev is asked `{_question['instructions']}` and chooses between "
+            + " and ".join(answer_label(_sam, o) for o in _question["criteria"])
+            + ". The ✓ marks the answer that follows from Sam's belief."
+        ),
+        answers_chart(_sam),
+    ]
+)
+```
+
 That gives us a fairly direct way to test the original re-representation hypothesis: what changes when we make the representation richer while holding the reasoner fixed? 
 
 To make this differentiation clear, the three representations are deliberately matched. Sparse describes the scenario, history adds enough information to *entail* the necessary beliefs, and rich represents them outright. 
@@ -81,6 +207,76 @@ tl;dr: Giving Jev the evidence from which a belief follows helps, but it doesn't
 There's an important caveat to that 0.63: some of the apparent history-to-rich gap turned out to come from an equal-length control I added to the history condition, rather than from the representation itself. I'll come back to that. But even after accounting for it, history doesn't close the gap.
 
 This distinction matters. If rich simply beat sparse, we couldn't say much about re-representation: rich contains more relevant information, and more relevant information might simply produce better predictions. But history gives Jev the information needed to derive the same belief without actually representing that belief. The fact that history improves on sparse but still falls short of rich is evidence that what matters isn't simply having the relevant information available to the system. It also matters whether the belief itself has been made available directly.
+
+Here is every development scenario, one row each, with a dot for each representation. Rows are sorted by how much the rich representation helped. Hover over a row for the scenario.
+
+```python {.marimo hide_code="true"}
+family = mo.ui.radio(
+    {"Action prediction (40)": "action_prediction", "Goal recognition (28)": "goal_recognition"},
+    value="Action prediction (40)",
+    inline=True,
+)
+family
+```
+
+```python {.marimo hide_code="true"}
+def _label(s):
+    wording = " v2" if "_v2_" in s["id"] else ""
+    return f"{s['domain'].replace('_', ' ')}{wording} · {s['variant'].replace('_', ' ')}"
+
+
+_dev = sorted(
+    (s for s in scenarios.values() if s["split"] == "dev" and s["family"] == family.value),
+    key=lambda s: (s["mass"]["rich"] - s["mass"]["sparse"], s["mass"]["rich"]),
+    reverse=True,
+)
+_order = [_label(s) for s in _dev]
+# Narrow screens get shorter row labels; hover shows the full scenario.
+_y = alt.Y(
+    "scenario:N",
+    sort=_order,
+    title=None,
+    axis=alt.Axis(labelLimit=alt.ExprRef("containerSize()[0] < 500 ? 110 : 240"), ticks=False),
+)
+alt.layer(
+    # Shade every other row so each scenario's three dots read as a group.
+    alt.Chart(alt.Data(values=[{"scenario": label} for label in _order[::2]]))
+    .mark_rect(color="#9aa0a6", opacity=0.12)
+    .encode(y=_y),
+    alt.Chart(
+        alt.Data(
+            values=[
+                {
+                    "scenario": _label(s),
+                    "story": s["description"],
+                    "representation": LABELS[c],
+                    "acceptable": s["mass"][c],
+                }
+                for s in _dev
+                for c in LABELS
+            ]
+        )
+    )
+    .mark_point(filled=True, size=40, opacity=1)
+    .encode(
+        x=alt.X(
+            "acceptable:Q",
+            title="Probability Jev puts on the acceptable answer",
+            scale=alt.Scale(domain=[0, 1]),
+            axis=alt.Axis(format="%", tickCount=5),
+        ),
+        y=_y,
+        yOffset=alt.YOffset("representation:N", sort=list(LABELS.values())),
+        color=alt.Color(
+            "representation:N",
+            sort=list(LABELS.values()),
+            scale=alt.Scale(domain=list(LABELS.values()), range=COLORS),
+            legend=alt.Legend(orient="top", title=None, columns=3),
+        ),
+        tooltip=["story:N", "representation:N", alt.Tooltip("acceptable:Q", format=".0%")],
+    ),
+).properties(width="container", height=18 * len(_dev), background="transparent")
+```
 
 So, it seems that doing more work to represent an agent's mental state can substantially improve the predictions made by the same underlying model. But there's an obvious problem with simply giving Jev the rich representation every time: if we're going to do the expensive representational work for every inference anyway, we've lost much of the motivation for having a cheap reasoner in the first place.
 
@@ -150,6 +346,83 @@ That last one ended up being especially fruitful: when history made Jev's predic
 
 Here, \\(H\\) is entropy—a measure of how spread out Jev's probability distribution is. Higher entropy means its probability mass is spread more evenly across the choices; lower entropy means it's more concentrated on one or a few answers. If adding the epistemic history increases entropy, it has, by definition, made the model less certain. And, it turns out, any amount of increased uncertainty from the addition of history is a pretty good signal that representing the belief directly will push the probability mass in the right direction.
 
+For Sam's two choices, entropy is 0 bits when Jev is certain either way and peaks at 1 bit when it is torn 50/50. Move the slider to see how it changes. The labelled points are Jev's actual answers for Sam: the history pass moved it from certain (0 bits) to 0.66 bits, so the trigger fires.
+
+```python {.marimo hide_code="true"}
+p_office = mo.ui.slider(
+    0, 1, step=0.01, value=0.5, show_value=True, label="Probability Jev puts on “go to office”"
+)
+p_office
+```
+
+```python {.marimo hide_code="true"}
+_p = p_office.value
+_sam = scenarios["report_false_positive"]
+_now = {"go_to_office": _p, "go_to_conference_room": 1 - _p}
+_curve = [{"p": i / 100, "H": entropy({"a": i / 100, "b": 1 - i / 100})} for i in range(101)]
+_answers = [
+    {
+        "p": _sam["probs"][c]["go_to_office"],
+        "H": entropy(_sam["probs"][c]),
+        "representation": LABELS[c],
+        "label": f"Sam, {c}",
+    }
+    for c in LABELS
+]
+_x = alt.X(
+    "p:Q",
+    title="Probability Jev puts on “go to office”",
+    scale=alt.Scale(domain=[0, 1], padding=8),
+    axis=alt.Axis(format="%"),
+)
+_y = alt.Y("H:Q", title="Entropy (bits)", scale=alt.Scale(domain=[0, 1.1], padding=8))
+mo.vstack(
+    [
+        alt.Chart(
+            alt.Data(
+                values=[
+                    {"choice": answer_label(_sam, k), "rank": i, "probability": v}
+                    for i, (k, v) in enumerate(_now.items())
+                ]
+            )
+        )
+        .mark_bar()
+        .encode(
+            x=alt.X("probability:Q", stack="normalize", title=None, axis=alt.Axis(format="%")),
+            color=alt.Color(
+                "choice:N", title=None, scale=choice_scale(_sam), legend=alt.Legend(orient="bottom")
+            ),
+            order=alt.Order("rank:Q"),
+            tooltip=["choice:N", alt.Tooltip("probability:Q", format=".0%")],
+        )
+        .properties(width="container", height=24, background="transparent"),
+        mo.md(f"Entropy of this answer: **{entropy(_now):.2f} bits**"),
+        alt.layer(
+            alt.Chart(alt.Data(values=_curve)).mark_line(color="#9aa0a6").encode(x=_x, y=_y),
+            alt.Chart(alt.Data(values=_answers))
+            .mark_point(filled=True, size=70, opacity=1)
+            .encode(
+                x=_x,
+                y=_y,
+                color=alt.Color(
+                    "representation:N",
+                    scale=alt.Scale(domain=list(LABELS.values()), range=COLORS),
+                    legend=None,
+                ),
+                tooltip=["label:N", alt.Tooltip("H:Q", format=".2f")],
+            ),
+            alt.Chart(alt.Data(values=_answers))
+            .mark_text(align="left", dx=8, dy=-8, fontSize=12, color="#8a9199")
+            .encode(x=_x, y=_y, text="label:N"),
+            # The answer set by the slider: a ring, so Sam's points stay visible under it.
+            alt.Chart(alt.Data(values=[{"p": _p, "H": entropy(_now)}]))
+            .mark_point(filled=False, size=220, strokeWidth=2.5, color="#e22d30")
+            .encode(x=_x, y=_y),
+        ).properties(width="container", height=240, background="transparent"),
+    ]
+)
+```
+
 Think of it like this: Jev has a coherent interpretation of the world based on the sparse representation. We add more information in the form of history. Sometimes, nothing changes—perhaps the history is consistent with the original interpretation. But sometimes, the history destabilizes the interpretation. Jev becomes less sure of its answer, even though history hasn't directly supplied the mental state needed to resolve the ambiguity. Supplying it via the rich representation, then, substantially moves the needle.
 
 Sparse couldn't tell us what it didn't know. History doesn't necessarily solve the problem either—but it can reveal that there is a problem. Rich can then come in to save the day. 
@@ -178,6 +451,29 @@ So I generated a new set of 32 scenarios that deliberately crossed the two dimen
 | **Goal recognition**  | 8              | 8          |
 
 As before, discriminative here means that the belief is sufficient for identifying one choice. Inhibitory means that it only points away from some of them. 
+
+Two held-out scenarios show the difference. In both, the agent holds a false belief and Jev must predict what they'll do. Rasheed's belief names where he'll go instead; Bijan's only rules a place out.
+
+```python {.marimo hide_code="true"}
+def _case(sid, heading):
+    s = scenarios[sid]
+    return mo.vstack(
+        [
+            mo.md(f"**{heading}.** {s['description'].split('. ')[0]}."),
+            mo.md("The rich representation adds:\n\n```text\n" + s["states"]["rich"]["mental_state"] + "\n```"),
+            answers_chart(s, ("sparse", "rich")),
+        ]
+    )
+
+
+mo.vstack(
+    [
+        _case("loading_gate_false_negative", "Discriminative"),
+        _case("ward_round_false_negative", "Inhibitory"),
+    ],
+    gap=2,
+)
+```
 
 Importantly, I also froze my escalation policy at this point. No more tweaking thresholds or testing other policies. I then generated the 32 new scenarios without running Jev on them.
 
