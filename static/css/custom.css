@@ -76,13 +76,38 @@
 	display: none;
 }
 
-/* marimo cells rendered by layouts/_markup/render-codeblock-python.html */
+/* marimo cells rendered by layouts/_markup/render-codeblock-python.html,
+   in the page's own font and on its background. */
 .marimo-cell {
 	margin: 0 0 24px;
+	--marimo-text-font: "Open Sans", Helvetica, Arial, sans-serif;
+	--marimo-heading-font: "Open Sans", Helvetica, Arial, sans-serif;
 }
 
 .marimo-cell__code summary {
 	cursor: pointer;
 	font-size: 13px;
 	color: var(--color-text-muted);
+}
+
+/* Cells with no output, such as imports, take no space. */
+.marimo-cell:has(> marimo-island > div:empty) {
+	margin: 0;
+}
+
+.marimo-cell marimo-island.marimo {
+	background: transparent;
+}
+
+.marimo-cell .prose {
+	font-size: inherit;
+	line-height: inherit;
+}
+
+/* marimo's controls in the site's red. marimo copies this stylesheet into
+   each control's shadow root, and an unlayered rule here outranks the
+   colours its own `@layer theme` sets on .marimo there. */
+.marimo {
+	--primary: #e22d30;
+	--color-blue-500: #e22d30;
 }

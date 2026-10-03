@@ -2,5 +2,15 @@
 {{- if and .IsPage (index .Params "marimo-version") -}}
 	{{- $version := site.Params.marimoIslandsVersion | default "0.25.1" -}}
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@marimo-team/islands@{{ $version }}/dist/style.css" crossorigin="anonymous">
+	<script>
+		/* marimo themes islands by a "dark" class on body; mirror the site's data-theme into it. */
+		(function (root, body) {
+			function sync() {
+				body.classList.toggle("dark", root.getAttribute("data-theme") === "dark");
+			}
+			sync();
+			new MutationObserver(sync).observe(root, { attributes: true, attributeFilter: ["data-theme"] });
+		})(document.documentElement, document.body);
+	</script>
 	<script type="module" src="https://cdn.jsdelivr.net/npm/@marimo-team/islands@{{ $version }}/dist/main.js"></script>
 {{- end -}}
