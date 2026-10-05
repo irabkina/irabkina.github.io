@@ -386,23 +386,26 @@ As before, discriminative here means that the belief is sufficient for identifyi
 Two held-out scenarios show the difference. In both, the agent holds a false belief and Jev must predict what they'll do. Rasheed's belief names where he'll go instead; Bijan's only rules a place out.
 
 ```python {.marimo hide_code="true"}
-def _case(sid, heading):
-    s = scenarios[sid]
-    return mo.vstack(
-        [
-            mo.md(f"**{heading}.** {s['description'].split('. ')[0]}."),
-            mo.md("The rich representation adds:\n\n```text\n" + s["states"]["rich"]["mental_state"] + "\n```"),
-            answers_chart(s, ("sparse", "rich")),
-        ]
-    )
+belief = mo.ui.radio(
+    {
+        "Discriminative (Rasheed)": ("loading_gate_false_negative", "Discriminative"),
+        "Inhibitory (Bijan)": ("ward_round_false_negative", "Inhibitory"),
+    },
+    value="Discriminative (Rasheed)",
+    inline=True,
+)
+belief
+```
 
-
+```python {.marimo hide_code="true"}
+_sid, _heading = belief.value
+_s = scenarios[_sid]
 mo.vstack(
     [
-        _case("loading_gate_false_negative", "Discriminative"),
-        _case("ward_round_false_negative", "Inhibitory"),
-    ],
-    gap=2,
+        mo.md(f"**{_heading}.** {_s['description'].split('. ')[0]}."),
+        mo.md("The rich representation adds:\n\n```text\n" + _s["states"]["rich"]["mental_state"] + "\n```"),
+        answers_chart(_s, ("sparse", "rich")),
+    ]
 )
 ```
 
