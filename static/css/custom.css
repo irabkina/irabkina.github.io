@@ -76,13 +76,57 @@
 	display: none;
 }
 
-/* marimo cells rendered by layouts/_markup/render-codeblock-python.html */
+/* marimo cells rendered by layouts/_markup/render-codeblock-python.html,
+   in the page's own font and on its background. */
 .marimo-cell {
 	margin: 0 0 24px;
+	--marimo-text-font: "Open Sans", Helvetica, Arial, sans-serif;
+	--marimo-heading-font: "Open Sans", Helvetica, Arial, sans-serif;
 }
 
 .marimo-cell__code summary {
 	cursor: pointer;
 	font-size: 13px;
 	color: var(--color-text-muted);
+}
+
+/* Cells with no output, such as imports, take no space. */
+.marimo-cell:has(> marimo-island > div:empty) {
+	margin: 0;
+}
+
+.marimo-cell marimo-island.marimo {
+	background: transparent;
+}
+
+.marimo-cell .prose {
+	font-size: inherit;
+	line-height: inherit;
+}
+
+/* marimo's controls in the site's red. marimo copies this stylesheet into
+   each control's shadow root, and an unlayered rule here outranks the
+   colours its own `@layer theme` sets on .marimo there. */
+.marimo {
+	--primary: #e22d30;
+	--color-blue-500: #e22d30;
+	/* marimo's own grey falls just short of 4.5:1 on the tab bar. */
+	--muted-foreground: #5f6368;
+}
+
+/* Inside a control's shadow root, marimo's dark colours never apply: its
+   dark rules need a .dark ancestor of .marimo, and the body's "dark" class
+   sits outside the shadow root. The .dark wrapper marimo puts inside it
+   can carry them instead. --muted is the site's dark surface rather than
+   marimo's near-black. The text colour is set again because .marimo sets it
+   from the light palette, and labels inherit that. */
+.marimo .dark {
+	color-scheme: dark;
+	color: var(--foreground);
+	--background: #181c1a;
+	--foreground: #eceeed;
+	--muted: #1d2226;
+	--muted-foreground: #b5bcc3;
+	--border: #3b403e;
+	--input: #474c4a;
 }

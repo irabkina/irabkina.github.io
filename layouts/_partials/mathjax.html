@@ -1,5 +1,6 @@
 {{- /* Overrides the theme's end-of-body script partial to also load marimo. */ -}}
-{{ if and .IsPage (eq (.Param "mathjax") true) }}
+{{- /* "true" as a string too: marimo keeps only string front matter values. */ -}}
+{{ if and .IsPage (in (slice true "true") (.Param "mathjax")) }}
 <script src="{{ .Param "mathjaxPath" | default "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.6/MathJax.js" }}{{ with .Param "mathjaxConfig" | default "TeX-AMS-MML_HTMLorMML" }}?config={{ . }}{{ end }}" async></script>
 {{ end }}
 {{- partial "marimo/runtime.html" . -}}
