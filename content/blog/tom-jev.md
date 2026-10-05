@@ -251,11 +251,42 @@ _y = alt.Y(
         ticks=False,
     ),
 )
+_x = alt.X(
+    "acceptable:Q",
+    title="Probability Jev puts on the acceptable answer",
+    scale=alt.Scale(domain=[0, 1]),
+    # On narrow screens the title is wider than the plot, so end it at
+    # the plot's right edge and let it run under the row labels.
+    axis=alt.Axis(
+        format="%",
+        tickCount=5,
+        titleAnchor=alt.ExprRef("containerSize()[0] < 500 ? 'end' : 'middle'"),
+    ),
+)
+# All three answers sit on the row's line. Rich and history are rings of
+# different sizes around sparse's dot, so equal values nest rather than hide
+# each other, and a line spans the row's lowest to highest answer.
+_reps = list(LABELS.values())
+_style = dict(scale=alt.Scale(domain=_reps), title=None)
 alt.layer(
-    # Shade every other row so each scenario's three dots read as a group.
+    # Shade every other row so each scenario's line reads as one row.
     alt.Chart(alt.Data(values=[{"scenario": label} for label in _order[::2]]))
     .mark_rect(color="#9aa0a6", opacity=0.12)
     .encode(y=_y),
+    alt.Chart(
+        alt.Data(
+            values=[
+                {
+                    "scenario": _label(s),
+                    "acceptable": min(s["mass"].values()),
+                    "high": max(s["mass"].values()),
+                }
+                for s in _dev
+            ]
+        )
+    )
+    .mark_rule(color="#9aa0a6", strokeWidth=2, opacity=0.6)
+    .encode(x=_x, x2="high:Q", y=_y),
     alt.Chart(
         alt.Data(
             values=[
@@ -266,31 +297,33 @@ alt.layer(
                     "acceptable": s["mass"][c],
                 }
                 for s in _dev
-                for c in LABELS
+                # Largest ring first, so the smaller marks draw on top of it.
+                for c in reversed(LABELS)
             ]
         )
     )
-    .mark_point(filled=True, size=40, opacity=1)
+    .mark_point(opacity=1)
     .encode(
-        x=alt.X(
-            "acceptable:Q",
-            title="Probability Jev puts on the acceptable answer",
-            scale=alt.Scale(domain=[0, 1]),
-            # On narrow screens the title is wider than the plot, so end it at
-            # the plot's right edge and let it run under the row labels.
-            axis=alt.Axis(
-                format="%",
-                tickCount=5,
-                titleAnchor=alt.ExprRef("containerSize()[0] < 500 ? 'end' : 'middle'"),
-            ),
-        ),
+        x=_x,
         y=_y,
-        yOffset=alt.YOffset("representation:N", sort=list(LABELS.values())),
-        color=alt.Color(
+        stroke=alt.Stroke(
             "representation:N",
-            sort=list(LABELS.values()),
-            scale=alt.Scale(domain=list(LABELS.values()), range=COLORS),
-            legend=alt.Legend(orient="top", title=None, columns=3),
+            **{**_style, "scale": alt.Scale(domain=_reps, range=COLORS)},
+            legend=alt.Legend(orient="top", columns=3),
+        ),
+        fill=alt.Fill(
+            "representation:N",
+            **{**_style, "scale": alt.Scale(domain=_reps, range=[COLORS[0], "transparent", "transparent"])},
+        ),
+        # Sized so each mark fits inside the next ring: the dot has no
+        # outline, and each ring's hole is wider than the mark inside it.
+        size=alt.Size(
+            "representation:N",
+            **{**_style, "scale": alt.Scale(domain=_reps, range=[30, 90, 200])},
+        ),
+        strokeWidth=alt.StrokeWidth(
+            "representation:N",
+            **{**_style, "scale": alt.Scale(domain=_reps, range=[0, 2, 2])},
         ),
         tooltip=["story:N", "representation:N", alt.Tooltip("acceptable:Q", format=".0%")],
     ),
