@@ -3,10 +3,15 @@
 	{{- $version := site.Params.marimoIslandsVersion | default "0.25.1" -}}
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@marimo-team/islands@{{ $version }}/dist/style.css" crossorigin="anonymous">
 	<script>
-		/* marimo themes islands by a "dark" class on body; mirror the site's data-theme into it. */
+		/* marimo themes islands by a "dark" class on body; mirror the site's data-theme into it.
+		   marimo reads that class only once, at startup. The one theme signal it watches
+		   is VS Code's data-vscode-theme-kind, so set that too and the toggle restyles
+		   figures already on the page. */
 		(function (root, body) {
 			function sync() {
-				body.classList.toggle("dark", root.getAttribute("data-theme") === "dark");
+				var dark = root.getAttribute("data-theme") === "dark";
+				body.classList.toggle("dark", dark);
+				body.dataset.vscodeThemeKind = dark ? "vscode-dark" : "vscode-light";
 			}
 			sync();
 			new MutationObserver(sync).observe(root, { attributes: true, attributeFilter: ["data-theme"] });
