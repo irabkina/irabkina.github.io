@@ -225,12 +225,20 @@ _dev = sorted(
     reverse=True,
 )
 _order = [_label(s) for s in _dev]
-# Narrow screens get shorter row labels; hover shows the full scenario.
+# Narrow screens get shorter row labels; hover shows the full scenario. The
+# label column is the same width for both families, so the plot doesn't
+# shift when the radio buttons switch between them.
+_label_width = alt.ExprRef("containerSize()[0] < 500 ? 110 : 200")
 _y = alt.Y(
     "scenario:N",
     sort=_order,
     title=None,
-    axis=alt.Axis(labelLimit=alt.ExprRef("containerSize()[0] < 500 ? 110 : 240"), ticks=False),
+    axis=alt.Axis(
+        labelLimit=_label_width,
+        minExtent=_label_width,
+        maxExtent=_label_width,
+        ticks=False,
+    ),
 )
 alt.layer(
     # Shade every other row so each scenario's three dots read as a group.
