@@ -193,12 +193,12 @@ That's a fair point. We would, then, expect history to give a similar improvemen
 | **Representation** | **Mean acceptable mass** |
 |---|---:|
 | Sparse | 0.51 |
-| History | 0.63 |
+| History | 0.57 |
 | Rich | 0.87 |
 
 tl;dr: Giving Jev the evidence from which a belief follows helps, but it doesn't produce the same result as explicitly representing the belief.
 
-There's an important caveat to that 0.63: some of the apparent history-to-rich gap turned out to come from an equal-length control I added to the history condition, rather than from the representation itself. I'll come back to that. But even after accounting for it, history doesn't close the gap.
+There's an important caveat to that 0.57: some of the apparent history-to-rich gap turned out to come from an equal-length control I added to the history condition, rather than from the representation itself. I'll come back to that. But even after accounting for it, history doesn't close the gap.
 
 This distinction matters. If rich simply beat sparse, we couldn't say much about re-representation: rich contains more relevant information, and more relevant information might simply produce better predictions. But history gives Jev the information needed to derive the same belief without actually representing that belief. The fact that history improves on sparse but still falls short of rich is evidence that what matters isn't simply having the relevant information available to the system. It also matters whether the belief itself has been made available directly.
 
@@ -214,9 +214,20 @@ family
 ```
 
 ```python {.marimo hide_code="true"}
+# Discriminative goal-recognition variants say which goal the agent believes
+# is where they're walking, e.g. false_false: only the goal that isn't there.
+GOAL_BELIEFS = {
+    "true_true": "right goal",
+    "false_false": "wrong goal",
+    "false_true": "both goals",
+    "true_false": "neither goal",
+}
+
+
 def _label(s):
     wording = " v2" if "_v2_" in s["id"] else ""
-    return f"{s['domain'].replace('_', ' ')}{wording} · {s['variant'].replace('_', ' ')}"
+    condition = GOAL_BELIEFS.get(s["variant"], s["variant"].replace("_", " "))
+    return f"{s['domain'].replace('_', ' ')}{wording} · {condition}"
 
 
 _dev = sorted(
