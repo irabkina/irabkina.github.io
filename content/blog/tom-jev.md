@@ -50,7 +50,6 @@ The model is the same in all three cases. The underlying situation is the same. 
 
 ```python {.marimo hide_code="true"}
 import json
-import math
 import sys
 
 import altair as alt
@@ -62,11 +61,6 @@ LABELS = {"sparse": "Sparse", "history": "History", "rich": "Rich"}
 COLORS = ["#9aa0a6", "#f19a9b", "#e22d30"]
 REDS = ["#e22d30", "#f0787a", "#f8b4b5"]
 GREYS = ["#5f6368", "#80868b", "#9aa0a6", "#c4c8cc"]
-
-
-def entropy(p):
-    # max() turns the -0.0 of a certain answer into 0.0.
-    return max(0.0, -sum(v * math.log2(v) for v in p.values() if v > 0))
 
 
 async def load_json(path):
@@ -345,83 +339,6 @@ Testing this hypothesis didn't require any new computations. I already had Jev's
 That last one ended up being especially fruitful: when history made Jev's prediction less certain, providing the rich representation was disproportionately likely to help. Or, more formally, \\(H(history) > H(sparse) \Rightarrow \text{re-represent}\\).
 
 Here, \\(H\\) is entropy—a measure of how spread out Jev's probability distribution is. Higher entropy means its probability mass is spread more evenly across the choices; lower entropy means it's more concentrated on one or a few answers. If adding the epistemic history increases entropy, it has, by definition, made the model less certain. And, it turns out, any amount of increased uncertainty from the addition of history is a pretty good signal that representing the belief directly will push the probability mass in the right direction.
-
-For Sam's two choices, entropy is 0 bits when Jev is certain either way and peaks at 1 bit when it is torn 50/50. Move the slider to see how it changes. The labelled points are Jev's actual answers for Sam: the history pass moved it from certain (0 bits) to 0.66 bits, so the trigger fires.
-
-```python {.marimo hide_code="true"}
-p_office = mo.ui.slider(
-    0, 1, step=0.01, value=0.5, show_value=True, label="Probability Jev puts on “go to office”"
-)
-p_office
-```
-
-```python {.marimo hide_code="true"}
-_p = p_office.value
-_sam = scenarios["report_false_positive"]
-_now = {"go_to_office": _p, "go_to_conference_room": 1 - _p}
-_curve = [{"p": i / 100, "H": entropy({"a": i / 100, "b": 1 - i / 100})} for i in range(101)]
-_answers = [
-    {
-        "p": _sam["probs"][c]["go_to_office"],
-        "H": entropy(_sam["probs"][c]),
-        "representation": LABELS[c],
-        "label": f"Sam, {c}",
-    }
-    for c in LABELS
-]
-_x = alt.X(
-    "p:Q",
-    title="Probability Jev puts on “go to office”",
-    scale=alt.Scale(domain=[0, 1], padding=8),
-    axis=alt.Axis(format="%"),
-)
-_y = alt.Y("H:Q", title="Entropy (bits)", scale=alt.Scale(domain=[0, 1.1], padding=8))
-mo.vstack(
-    [
-        alt.Chart(
-            alt.Data(
-                values=[
-                    {"choice": answer_label(_sam, k), "rank": i, "probability": v}
-                    for i, (k, v) in enumerate(_now.items())
-                ]
-            )
-        )
-        .mark_bar()
-        .encode(
-            x=alt.X("probability:Q", stack="normalize", title=None, axis=alt.Axis(format="%")),
-            color=alt.Color(
-                "choice:N", title=None, scale=choice_scale(_sam), legend=alt.Legend(orient="bottom")
-            ),
-            order=alt.Order("rank:Q"),
-            tooltip=["choice:N", alt.Tooltip("probability:Q", format=".0%")],
-        )
-        .properties(width="container", height=24, background="transparent"),
-        mo.md(f"Entropy of this answer: **{entropy(_now):.2f} bits**"),
-        alt.layer(
-            alt.Chart(alt.Data(values=_curve)).mark_line(color="#9aa0a6").encode(x=_x, y=_y),
-            alt.Chart(alt.Data(values=_answers))
-            .mark_point(filled=True, size=70, opacity=1)
-            .encode(
-                x=_x,
-                y=_y,
-                color=alt.Color(
-                    "representation:N",
-                    scale=alt.Scale(domain=list(LABELS.values()), range=COLORS),
-                    legend=None,
-                ),
-                tooltip=["label:N", alt.Tooltip("H:Q", format=".2f")],
-            ),
-            alt.Chart(alt.Data(values=_answers))
-            .mark_text(align="left", dx=8, dy=-8, fontSize=12, color="#8a9199")
-            .encode(x=_x, y=_y, text="label:N"),
-            # The answer set by the slider: a ring, so Sam's points stay visible under it.
-            alt.Chart(alt.Data(values=[{"p": _p, "H": entropy(_now)}]))
-            .mark_point(filled=False, size=220, strokeWidth=2.5, color="#e22d30")
-            .encode(x=_x, y=_y),
-        ).properties(width="container", height=240, background="transparent"),
-    ]
-)
-```
 
 Think of it like this: Jev has a coherent interpretation of the world based on the sparse representation. We add more information in the form of history. Sometimes, nothing changes—perhaps the history is consistent with the original interpretation. But sometimes, the history destabilizes the interpretation. Jev becomes less sure of its answer, even though history hasn't directly supplied the mental state needed to resolve the ambiguity. Supplying it via the rich representation, then, substantially moves the needle.
 
