@@ -265,7 +265,13 @@ alt.layer(
             "acceptable:Q",
             title="Probability Jev puts on the acceptable answer",
             scale=alt.Scale(domain=[0, 1]),
-            axis=alt.Axis(format="%", tickCount=5),
+            # On narrow screens the title is wider than the plot, so end it at
+            # the plot's right edge and let it run under the row labels.
+            axis=alt.Axis(
+                format="%",
+                tickCount=5,
+                titleAnchor=alt.ExprRef("containerSize()[0] < 500 ? 'end' : 'middle'"),
+            ),
         ),
         y=_y,
         yOffset=alt.YOffset("representation:N", sort=list(LABELS.values())),
