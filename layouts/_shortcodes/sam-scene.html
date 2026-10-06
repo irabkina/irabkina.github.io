@@ -1,7 +1,7 @@
 {{- /*
 Sam's scenario acted out in 3D: Sam sees the report, Alex moves it while Sam is away,
 and the scene stops on the question with Sam in the hallway. Drawn by static/js/sam-scene.js
-with three.js; the readout under it compares where the report is with where Sam thinks it is.
+with three.js.
 
 Usage: {{< sam-scene >}}
 */ -}}
@@ -26,20 +26,6 @@ Usage: {{< sam-scene >}}
 		<div class="sam-scene__track">
 			<input class="sam-scene__scrub" type="range" min="0" max="27" step="0.01" value="0" data-sam="scrub" aria-label="Scenario timeline">
 			<div class="sam-scene__ticks" data-sam="ticks"></div>
-		</div>
-	</div>
-	<div class="sam-scene__state" role="group" aria-label="Where the report is, and where Sam thinks it is">
-		<div class="sam-scene__row">
-			<span class="sam-scene__swatch sam-scene__swatch--real" aria-hidden="true"></span>
-			<span class="sam-scene__key">The report is in</span>
-			<svg class="sam-mini" viewBox="0 0 48 28" aria-hidden="true" data-sam="mini-world"></svg>
-			<span class="sam-scene__value"><span data-sam="world-text">the office</span></span>
-		</div>
-		<div class="sam-scene__row">
-			<span class="sam-scene__swatch sam-scene__swatch--belief" aria-hidden="true"></span>
-			<span class="sam-scene__key">Sam thinks it is in</span>
-			<svg class="sam-mini" viewBox="0 0 48 28" aria-hidden="true" data-sam="mini-belief"></svg>
-			<span class="sam-scene__value"><span data-sam="belief-text">not seen yet</span><span class="sam-scene__note" data-sam="note">Sam didn’t see it move</span></span>
 		</div>
 	</div>
 </figure>

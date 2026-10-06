@@ -396,11 +396,7 @@ function mount(root) {
 	}
 
 	const line = $("line"), step = $("step");
-	const worldText = $("world-text"), beliefText = $("belief-text"), note = $("note");
-	const miniWorld = $("mini-world"), miniBelief = $("mini-belief");
-	miniWorld.innerHTML = MINI; miniBelief.innerHTML = MINI;
-	const NAMES = { office: "the office", conf: "the conference room", hall: "Alex’s hands" };
-	let lastLine = -1, lastWorld = null, lastBelief = null, bubbleShown = null;
+	let lastLine = -1, bubbleShown = null;
 
 	function apply(t) {
 		pose(sam, samT, t, samAlpha(t));
@@ -409,17 +405,15 @@ function mount(root) {
 		sam.head.rotation.x = t > LOOK0 && t < LOOK1 ? 0.35 * smooth((t - LOOK0) / 0.4) * smooth((LOOK1 - t) / 0.4) : 0;
 		sam.head.rotation.y = ramp(t, [[GLANCE, 0], [GLANCE + 0.5, 0.6], [GLANCE + 1.3, 0.6], [GLANCE + 1.9, -0.6], [GLANCE + 2.7, -0.6], [GLANCE + 3.2, 0]]);
 
-		let where;
 		if (t < PICK0 + 0.25) {
-			report.position.copy(REPORT_DESK); report.rotation.y = 0.12; where = "office";
+			report.position.copy(REPORT_DESK); report.rotation.y = 0.12;
 		} else if (t < PUT1 - 0.25) {
 			const k = smooth((t - (PICK0 + 0.25)) / 0.35), k2 = smooth((t - PUT0) / 0.45);
 			const hand = new THREE.Vector3(0, 1.0, 0.46).applyAxisAngle(UP, a.yaw).add(a.pos);
 			report.position.copy(REPORT_DESK).lerp(hand, k).lerp(REPORT_TABLE, t > PUT0 ? k2 : 0);
 			report.rotation.y = lerpAngle(0.12, a.yaw, k);
-			where = t > PUT0 + 0.2 ? "conf" : "hall";
 		} else {
-			report.position.copy(REPORT_TABLE); report.rotation.y = -0.18; where = "conf";
+			report.position.copy(REPORT_TABLE); report.rotation.y = -0.18;
 		}
 
 		gaze.visible = t > LOOK0 && t < LOOK1;
@@ -445,10 +439,6 @@ function mount(root) {
 			step.textContent = `${li + 1} / ${LINES.length}`;
 			ticks.forEach((el, i) => el.classList.toggle("sam-scene__tick--on", i === li));
 		}
-		if (where !== lastWorld) { lastWorld = where; worldText.textContent = NAMES[where]; setMini(miniWorld, where); }
-		const bel = beliefKnown ? "office" : "";
-		if (bel !== lastBelief) { lastBelief = bel; beliefText.textContent = bel ? NAMES.office : "not seen yet"; setMini(miniBelief, bel || null); }
-		note.classList.toggle("sam-scene__note--show", Boolean(bel) && where !== "office");
 	}
 
 	/* -------------------------------------------------------------- framing, theme, drawing */
