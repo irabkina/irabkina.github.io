@@ -130,3 +130,303 @@
 	--border: #3b403e;
 	--input: #474c4a;
 }
+
+/* Sam's scenario in 3D, layouts/_shortcodes/sam-scene.html. The scene keeps its own
+   colours: coral for what Sam believes, saffron for where the report really is. */
+.sam-scene {
+	--sam-stage: #ecebe7;
+	--sam-belief: #d94b33;
+	--sam-real: #f2b92b;
+	--sam-office: #93b7b0;
+	--sam-conf: #a9acd6;
+	--sam-hall: #f1e8d6;
+	--sam-bubble: #fffdf8;
+	margin: 8px 0 28px;
+}
+
+html[data-theme="dark"] .sam-scene {
+	--sam-stage: #1d2226;
+	--sam-belief: #ff7a5f;
+}
+
+.sam-scene__stage {
+	position: relative;
+	width: 100%;
+	max-width: 100%;
+	aspect-ratio: 16 / 9;
+	min-height: 220px;
+	overflow: hidden;
+	background: var(--sam-stage);
+	border: 1px solid var(--color-border);
+}
+
+.sam-scene__canvas {
+	display: block;
+	width: 100%;
+	height: 100%;
+}
+
+.sam-scene__fallback {
+	display: none;
+	margin: 0;
+	padding: 24px;
+	color: var(--color-text-muted);
+}
+
+.sam-scene--no-webgl .sam-scene__fallback {
+	display: block;
+}
+
+/* Sam's thought bubble: a tiny map with the report where Sam believes it is */
+.sam-scene__bubble-anchor {
+	position: absolute;
+	top: 0;
+	left: 0;
+	pointer-events: none;
+}
+
+.sam-scene__bubble {
+	--s: var(--sam-bubble-scale, 1);
+	position: absolute;
+	bottom: 0;
+	left: calc(-16px * var(--s));
+	padding: calc(5px * var(--s)) calc(6px * var(--s));
+	line-height: 0;
+	background: var(--sam-bubble);
+	border-radius: calc(12px * var(--s));
+	box-shadow: 0 2px 10px rgba(30, 25, 20, .18);
+	opacity: 0;
+	transform: scale(0);
+	transform-origin: 20% 120%;
+	transition: transform .28s cubic-bezier(.3, 1.4, .5, 1), opacity .2s ease;
+}
+
+.sam-scene__bubble--show {
+	opacity: 1;
+	transform: scale(1);
+}
+
+.sam-scene__bubble::before,
+.sam-scene__bubble::after {
+	position: absolute;
+	content: "";
+	background: var(--sam-bubble);
+	border-radius: 50%;
+}
+
+.sam-scene__bubble::before {
+	left: calc(10px * var(--s));
+	bottom: calc(-10px * var(--s));
+	width: calc(8px * var(--s));
+	height: calc(8px * var(--s));
+}
+
+.sam-scene__bubble::after {
+	left: calc(5px * var(--s));
+	bottom: calc(-16px * var(--s));
+	width: calc(4px * var(--s));
+	height: calc(4px * var(--s));
+}
+
+.sam-scene__bubble .sam-mini {
+	width: calc(54px * var(--s));
+	height: calc(32px * var(--s));
+}
+
+.sam-mini {
+	display: block;
+	width: 48px;
+	height: 28px;
+}
+
+.sam-mini__office { fill: var(--sam-office); }
+.sam-mini__conf { fill: var(--sam-conf); }
+.sam-mini__hall { fill: var(--sam-hall); }
+
+.sam-mini__doc {
+	fill: var(--sam-real);
+	transition: transform .35s ease, opacity .25s ease;
+}
+
+/* the current line of the scenario */
+.sam-scene__caption {
+	display: flex;
+	gap: 14px;
+	align-items: baseline;
+	min-height: 3em;
+	margin: 12px 0 4px;
+	color: var(--color-text);
+}
+
+.sam-scene__step {
+	flex: none;
+	font-size: 12px;
+	color: var(--color-text-muted);
+	font-variant-numeric: tabular-nums;
+}
+
+.sam-scene__line {
+	min-width: 0;
+	font-size: 17px;
+	font-style: italic;
+	line-height: 1.4;
+}
+
+.sam-scene__controls {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px 10px;
+	align-items: center;
+}
+
+.sam-scene__button {
+	display: inline-flex;
+	gap: 6px;
+	align-items: center;
+	height: 32px;
+	padding: 0 12px;
+	font-size: 13px;
+	font-weight: 600;
+	color: var(--color-text);
+	cursor: pointer;
+	background: var(--color-surface);
+	border: 1px solid var(--color-border-strong);
+	border-radius: 16px;
+}
+
+.sam-scene__button:hover {
+	background: var(--color-surface-alt);
+}
+
+.sam-scene__button svg {
+	width: 13px;
+	height: 13px;
+	fill: currentColor;
+}
+
+.sam-scene__button:focus-visible,
+.sam-scene__tick:focus-visible,
+.sam-scene__scrub:focus-visible {
+	outline: 2px solid var(--color-focus);
+	outline-offset: 2px;
+}
+
+.sam-scene__track {
+	position: relative;
+	flex: 1 1 220px;
+	min-width: 0;
+	height: 44px;
+}
+
+.sam-scene__scrub {
+	position: absolute;
+	top: 6px;
+	left: 0;
+	width: 100%;
+	accent-color: #e22d30;
+}
+
+.sam-scene__ticks {
+	position: absolute;
+	top: 28px;
+	right: 8px;
+	left: 8px;
+	height: 16px;
+}
+
+.sam-scene__tick {
+	position: absolute;
+	top: 0;
+	padding: 1px 5px;
+	font-size: 11px;
+	color: var(--color-text-muted);
+	cursor: pointer;
+	background: none;
+	border: 0;
+	border-radius: 4px;
+	transform: translateX(-50%);
+}
+
+.sam-scene__tick--on {
+	font-weight: 700;
+	color: #e22d30;
+}
+
+html[data-theme="dark"] .sam-scene__tick--on {
+	color: #ff8f8f;
+}
+
+/* the world against Sam's belief; also the key to the two colours */
+.sam-scene__state {
+	margin-top: 6px;
+	border-top: 1px solid var(--color-border);
+}
+
+.sam-scene__row {
+	display: grid;
+	grid-template-columns: 12px minmax(0, 15ch) auto minmax(0, 1fr);
+	gap: 12px;
+	align-items: center;
+	padding: 9px 0;
+	border-bottom: 1px solid var(--color-border);
+}
+
+.sam-scene__swatch {
+	width: 12px;
+	height: 12px;
+	border-radius: 50%;
+}
+
+.sam-scene__swatch--real { background: var(--sam-real); }
+.sam-scene__swatch--belief { background: var(--sam-belief); }
+
+.sam-scene__key {
+	font-size: 13px;
+	color: var(--color-text-muted);
+}
+
+.sam-scene__value {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px 12px;
+	align-items: center;
+	min-width: 0;
+	font-weight: 600;
+}
+
+.sam-scene__note {
+	padding: 2px 8px;
+	font-size: 11.5px;
+	font-weight: 600;
+	color: var(--sam-belief);
+	border: 1px solid currentColor;
+	border-radius: 10px;
+	opacity: 0;
+	transition: opacity .3s ease;
+}
+
+.sam-scene__note--show {
+	opacity: 1;
+}
+
+@media (max-width: 620px) {
+	.sam-scene__row {
+		grid-template-columns: 12px 1fr;
+	}
+
+	.sam-scene__row .sam-mini {
+		display: none;
+	}
+
+	.sam-scene__value {
+		grid-column: 2;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.sam-scene__bubble,
+	.sam-mini__doc,
+	.sam-scene__note {
+		transition: none;
+	}
+}
