@@ -3,6 +3,8 @@ title: "Knowing When to Re-Represent"
 date: "2026-10-01"
 mathjax: "true"
 marimo-version: 0.25.1
+thumbnail: "images/tom-jev-hero.jpg"
+images: ["images/tom-jev-social.jpg"]
 ---
 
 ## An old idea I've been wanting to revisit
