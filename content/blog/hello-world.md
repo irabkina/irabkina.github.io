@@ -1,6 +1,8 @@
 ---
 title: "Hello, World"
 date: 2026-09-29
+thumbnail: "images/hello-world-hero.jpg"
+images: ["images/hello-world-social.jpg"]
 ---
 
 I've been meaning to start writing more about AI outside of papers and work projects, so... here goes.
