@@ -1,0 +1,32 @@
+{{- /*
+Sam's scenario acted out in 3D: Sam sees the report, Alex moves it while Sam is away,
+and the scene stops on the question with Sam in the hallway. Drawn by static/js/sam-scene.js
+with three.js.
+
+Usage: {{< sam-scene >}}
+*/ -}}
+<figure class="sam-scene">
+	<div class="sam-scene__stage" data-sam="stage" role="img" aria-label="An office on the left and a conference room on the right, with a hallway between them. Sam sees a report on the office desk and leaves. Alex carries the report to the conference room. Sam comes back and stops in the hallway between the two doors.">
+		<div class="sam-scene__bubble-anchor" data-sam="bubble-anchor">
+			<div class="sam-scene__bubble" data-sam="bubble"><svg class="sam-mini" viewBox="0 0 48 28" aria-hidden="true"></svg></div>
+		</div>
+		<p class="sam-scene__fallback">This figure needs WebGL, which this browser has turned off.</p>
+	</div>
+	<figcaption class="sam-scene__caption" aria-live="polite">
+		<span class="sam-scene__step" data-sam="step">1 / 5</span>
+		<span class="sam-scene__line" data-sam="line">A report was originally in the office.</span>
+	</figcaption>
+	<div class="sam-scene__controls">
+		<button class="sam-scene__button" type="button" data-sam="play" aria-label="Play">
+			<svg viewBox="0 0 16 16" aria-hidden="true" data-sam="play-icon"><path d="M4 2l10 6-10 6z"/></svg><span data-sam="play-label">Play</span>
+		</button>
+		<button class="sam-scene__button" type="button" data-sam="restart">
+			<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2a6 6 0 1 1-5.66 8h2.2A4 4 0 1 0 8 4v2.5L4.5 3.25 8 0z"/></svg>Restart
+		</button>
+		<div class="sam-scene__track">
+			<input class="sam-scene__scrub" type="range" min="0" max="27" step="0.01" value="0" data-sam="scrub" aria-label="Scenario timeline">
+			<div class="sam-scene__ticks" data-sam="ticks"></div>
+		</div>
+	</div>
+</figure>
+<script type="module" src="{{ "js/sam-scene.js" | relURL }}"></script>

@@ -30,6 +30,8 @@ Consider the following scenario:
 > Sam wants the report.\
 > Where will Sam go?
 
+{{< sam-scene >}}
+
 The answer may seem obvious—to the office, of course. But notice how much work is hiding inside that answer. We know the report is actually in the conference room. We also know that Sam last saw it in the office and didn't see it move. From those facts, we construct another fact that isn't explicitly stated: Sam believes the report is still in the office. We then use that belief, rather than the true location of the report, to predict what Sam will do.
 
 But how much of that needs to be represented explicitly for Jev?
