@@ -131,6 +131,168 @@
 	--input: #474c4a;
 }
 
+/* Flow diagrams (layouts/_shortcodes/setup-pipelines.html and
+   inference-pipeline.html): lanes of steps joined by arrows, tinted in the
+   figures' palette of grey, pink and red for sparse, history and rich.
+   Lanes share the grid of --flow-columns, so steps line up by stage.
+   They run left to right, and top to bottom when the column is narrow. */
+.flow {
+	display: grid;
+	gap: 22px;
+	margin: 28px 0 32px;
+	container-type: inline-size;
+	font-size: 13px;
+	line-height: 1.45;
+	--flow-gap: 22px;
+}
+
+.content .flow__lane-title {
+	margin: 0 0 8px;
+	font-size: 14px;
+	font-style: italic;
+	color: var(--color-text-muted);
+}
+
+.content .flow__steps {
+	display: grid;
+	grid-template-columns: var(--flow-columns);
+	gap: var(--flow-gap);
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.content .flow__node {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	margin: 0;
+	padding: 12px;
+	background: color-mix(in srgb, var(--flow-accent) 13%, var(--color-bg-body));
+	border: 1px solid color-mix(in srgb, var(--flow-accent) 45%, transparent);
+	border-radius: 12px;
+	--flow-accent: #9aa0a6;
+}
+
+.flow__node strong {
+	font-size: 13.5px;
+	font-weight: 600;
+	line-height: 1.3;
+	/* Five columns are too narrow for "representation" on one line. */
+	hyphens: auto;
+}
+
+.flow__node--span-2 {
+	grid-column: span 2;
+}
+
+.content .flow__node--history { --flow-accent: #f19a9b; }
+.content .flow__node--rich { --flow-accent: #e22d30; }
+
+.content .flow__node--jev {
+	background: var(--color-surface);
+	border-color: var(--color-border-strong);
+}
+
+.content .flow__node--decision {
+	background: none;
+	border: 1.5px dashed var(--color-border-strong);
+}
+
+/* The result: a plain label rather than a box. */
+.content .flow__node--out {
+	justify-content: center;
+	padding: 12px 0;
+	background: none;
+	border: 0;
+	color: var(--color-text-muted);
+}
+
+.content .flow__node ul {
+	margin: 0 0 0 16px;
+	list-style: disc;
+}
+
+.content .flow__node li {
+	margin: 0;
+}
+
+.flow__quote {
+	font-style: italic;
+}
+
+.flow__note {
+	color: var(--color-text-muted);
+}
+
+.flow__node code {
+	padding: 0 3px;
+	font-size: 12px;
+	white-space: nowrap;
+	border-radius: 4px;
+}
+
+/* The arrow to the next step, centred in the gap. */
+.flow__node:not(:last-child)::after {
+	content: "→";
+	position: absolute;
+	top: 50%;
+	right: calc(-1 * var(--flow-gap) / 2);
+	font-size: 17px;
+	font-style: normal;
+	line-height: 1;
+	color: var(--color-text-subtle);
+	transform: translate(50%, -50%);
+}
+
+/* Jev's answer for Sam: the share on the acceptable answer in red, the
+   rest in grey, as in the post's first figure. Pushed to the bottom of the
+   box, caption first, so bars in a row line up. */
+.flow__answer {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	margin-top: auto;
+	padding-top: 8px;
+}
+
+.flow__answer-bar {
+	display: flex;
+	height: 10px;
+	overflow: hidden;
+	background: #5f6368;
+	border-radius: 999px;
+}
+
+.flow__answer-bar i {
+	background: #e22d30;
+}
+
+@container (max-width: 640px) {
+	.content .flow__steps {
+		grid-template-columns: 1fr;
+		gap: 26px;
+	}
+
+	.flow__node--span-2 {
+		grid-column: auto;
+	}
+
+	.content .flow__node--out {
+		padding: 0;
+	}
+
+	.flow__node:not(:last-child)::after {
+		content: "↓";
+		top: auto;
+		right: auto;
+		bottom: -13px;
+		left: 50%;
+		transform: translate(-50%, 50%);
+	}
+}
+
 /* Sam's scenario in 3D, layouts/_shortcodes/sam-scene.html. The scene keeps its own
    colours; saffron is the report. */
 .sam-scene {

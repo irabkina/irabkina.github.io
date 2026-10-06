@@ -48,6 +48,8 @@ That gives us three versions of the same underlying situation:
 
 The model is the same in all three cases. The underlying situation is the same. What changes is how much work has already been done to represent the agent's mental state.
 
+Notice that the sparse representation says nothing about what Sam believes. If Sam had correctly believed the report was in the conference room, Jev would see exactly the same sparse input. So on its own, sparse can't tell a true belief from a false one; at best, it can assume that Sam believes what's true.
+
 *The figures in this post are interactive: they run Python in your browser, so they can take a few seconds to appear.*
 
 ```python {.marimo hide_code="true"}
@@ -504,11 +506,11 @@ This is sufficient to derive that, based on Sam's epistemic history, Sam believe
 
 In terms of the implementation, this is an architectural change:
 
-![Previous vs new setup: authored beliefs vs beliefs derived from epistemic history](/images/setup_pipelines.png)
+{{< setup-pipelines >}}
 
 This also gives a very concrete use for the entropy trigger during inference:
 
-![Inference pipeline with entropy-based escalation](/images/inference_pipeline.png)
+{{< inference-pipeline >}}
 
 But does it change the experiment? Derived beliefs aren't guaranteed to be one-to-one with authored ones—and in fact, they were not. In this implementation, they spell out negatives implied by exclusivity (i.e., what Sam does not know) and only include beliefs that are relevant to the queried agent.
 

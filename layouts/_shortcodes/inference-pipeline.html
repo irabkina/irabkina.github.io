@@ -1,0 +1,60 @@
+{{- /* Inference with entropy-based escalation in "Knowing When to
+       Re-Represent". The bars are Jev's answers for Sam (report_false_positive
+       in static/data/tom-jev/scenarios.json), coloured as in the post's first
+       figure: red for "go to office", the acceptable answer, grey for the rest. */ -}}
+<figure class="flow" style="--flow-columns: repeat(3, minmax(0, 1fr))">
+	<section class="flow__lane">
+		<p class="flow__lane-title">Every scenario</p>
+		<ol class="flow__steps">
+			<li class="flow__node flow__node--sparse">
+				<strong>1. Sparse inference</strong>
+				Infer from the basic world state: entities, events, question.
+				<span class="flow__answer" role="img" aria-label="For Sam, Jev puts 0% on go to office, the acceptable answer: entropy 0 bits">
+					<span class="flow__note">Sam: 0% on “go to office ✓”, H&nbsp;=&nbsp;0&nbsp;bits</span>
+					<span class="flow__answer-bar"><i style="width: 0%"></i></span>
+				</span>
+			</li>
+			<li class="flow__node flow__node--history">
+				<strong>2. History inference</strong>
+				Add epistemic events: who saw what.
+				<span class="flow__answer" role="img" aria-label="With history, Jev puts 17% on go to office: entropy 0.66 bits, up from 0">
+					<span class="flow__note">Sam: 17% on “go to office ✓”, H&nbsp;=&nbsp;0.66&nbsp;bits</span>
+					<span class="flow__answer-bar"><i style="width: 17%"></i></span>
+				</span>
+			</li>
+			<li class="flow__node flow__node--decision">
+				<strong>Did uncertainty increase?</strong>
+				<code>H(history) &gt; H(sparse)</code>
+				<span class="flow__note">Sam: 0.66 &gt; 0, so yes</span>
+			</li>
+		</ol>
+	</section>
+	<section class="flow__lane">
+		<p class="flow__lane-title">If yes: re-represent</p>
+		<ol class="flow__steps">
+			<li class="flow__node flow__node--rich">
+				<strong>3. Materialize beliefs</strong>
+				Construct the agent’s belief(s) from epistemic history in the knowledge graph.
+			</li>
+			<li class="flow__node flow__node--rich">
+				<strong>4. Rich inference</strong>
+				Infer with the scenario + derived belief(s) for the relevant agent.
+				<span class="flow__answer" role="img" aria-label="With the derived belief, Jev puts 96% on go to office">
+					<span class="flow__note">Sam: 96% on “go to office ✓”</span>
+					<span class="flow__answer-bar"><i style="width: 96%"></i></span>
+				</span>
+			</li>
+			<li class="flow__node flow__node--out">Final distribution over answers, from rich</li>
+		</ol>
+	</section>
+	<section class="flow__lane">
+		<p class="flow__lane-title">If no: stop</p>
+		<ol class="flow__steps">
+			<li class="flow__node flow__node--history flow__node--span-2">
+				<strong>Use the history result</strong>
+				No re-representation.
+			</li>
+			<li class="flow__node flow__node--out">Final distribution over answers, from history</li>
+		</ol>
+	</section>
+</figure>
