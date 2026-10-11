@@ -1,7 +1,7 @@
 ---
 title: "Learning to Vibe Code"
-# date: set to the publish day when this goes live
-draft: true
+date: 2026-10-11
+draft: false
 
 # Every post needs both: hero is 2400x1260, social preview is 1200x630 (JPEG in static/images/).
 thumbnail: "images/learning-to-vibe-code-hero.jpg"
@@ -52,7 +52,7 @@ The one thing I do worry about whenever I use a coding agent is the effect on th
 
 ## Finding a balance
 
-So where does that leave me? I'm not ready to give up on coding agents. There are clearly some major benefits, especially for the kind of exporatory work I enjoy doing. 
+So where does that leave me? I'm not ready to give up on coding agents. There are clearly some major benefits, especially for the kind of exploratory work I enjoy doing. 
 
 But I'm not exactly comfortable setting a prompt and letting them go. I've learned that there's a pretty big difference between delegating the implementation of an idea and delegating decisions at the level of the experiment itself. I'm happy to let an agent write boilerplate, set up infrastructure, or implement a feature I've specified. I'm much less happy letting it decide what data to use, how to evaluate results, or whether a finding is meaningful.
 
