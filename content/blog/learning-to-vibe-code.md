@@ -37,13 +37,13 @@ That extends to running multiple experimental conditions. In the Jev project, fo
 
 ## The bad
 
-At one point during the Jev project, I threw my hands up and nearly gave up. The coding agent had made changes without my approval that made the code super convoluted and, even worse, messed up my dataset. It produced "amazing" results but had, in reality, changed the dataset to fit the hypothesis. It generally made me want to give up on the whole thing.
+At one point during the Jev project, I threw my hands up and nearly gave up. The coding agent had made changes without my approval that made the code super convoluted and, even worse, messed up my dataset. It produced "amazing" results but had, in reality, changed the dataset to fit the hypothesis. 
 
 I had to roll everything back, and give the agent clear instructions to *never* do anything without my approval. Ever.
 
 Here's the thing: vibe coding makes it really easy to let this kind of issue slip by. We all get excited by good results! And these things sound so confident! But if I hadn't been paying close attention, I would have thought I found something interesting, when really I'd found, at best, an artifact or bug. Even now, I worry that I still missed something, and my results aren't as strong as they appear. That's not a great feeling, and, more importantly, it raises some serious questions about how we maintain scientific rigor when using coding agents.
 
-The same thing that makes vibe coding so appealing is its greatest weakness. It moves so quickly, and acts so confidently, that it's easy for mistakes to slip in. When the same system is creating data, implementing experiments, and reporting results all while the human in charge is making a cup of coffee, it's hard to keep up. And checking it all to be sure that it did exactly what was expected takes almost as long as it would have taken to just implement everything by hand. Are you really saving time or effort at that point?
+The same thing that makes vibe coding so appealing is its greatest weakness. It moves so quickly, and acts so confidently, that it's easy for mistakes to slip in. When the same system is creating data, implementing experiments, and reporting results all while the human in charge is making a cup of coffee, it's hard to keep up. And checking it all to be sure that it did exactly what was expected can take as long as it would have taken to just implement everything by hand. Are you really saving time or effort at that point?
 
 
 ## The ugly
