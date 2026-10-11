@@ -58,5 +58,5 @@ But I'm not exactly comfortable setting a prompt and letting them go. I've learn
 
 And I'm still figuring out where to draw that line. The more closely I supervise the agent, the less time I save. But the less I supervise it, the less confident I am in what it's producing.
 
-For now, I think the answer is somewhere in the middle. Which is perhaps not the most exciting conclusion to a blog post about vibe coding, but here we are.
+For now, I think the answer is somewhere in the middle, which is perhaps not the most exciting conclusion to a blog post about vibe coding. But here we are.
 
