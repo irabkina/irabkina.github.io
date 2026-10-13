@@ -1,5 +1,6 @@
 ---
 title: "About Me"
+aliases: ["/research/"]
 widgets: ["photo", "social", "recent", "taglist"]
 ---
 
